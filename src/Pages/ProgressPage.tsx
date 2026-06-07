@@ -290,9 +290,9 @@ export default function ProgressPage() {
                                     {/* Kolom Kiri (Baseline A) */}
                                     <td style={{ padding: '16px', fontWeight: 500 }}>
                                         <span style={{
-                                            background: leftItem.skinType.toUpperCase() === 'DRY' ? '#e6f4ff' : leftItem.skinType.toUpperCase() === 'OILY' ? '#fefce8' : leftItem.skinType.toUpperCase() === 'NORMAL' ? '#f0fdf4' : '#fff',
-                                            color: leftItem.skinType.toUpperCase() === 'DRY' ? '#0958d9' : leftItem.skinType.toUpperCase() === 'OILY' ? '#b45309' : leftItem.skinType.toUpperCase() === 'NORMAL' ? '#15803d' : '#2b2b1f',
-                                            border: '1px solid ' + (leftItem.skinType.toUpperCase() === 'DRY' ? '#91caff' : leftItem.skinType.toUpperCase() === 'OILY' ? '#fde68a' : leftItem.skinType.toUpperCase() === 'NORMAL' ? '#86efac' : '#d6d2c4'),
+                                            background: (leftItem.skinType || '').toUpperCase() === 'DRY' ? '#e6f4ff' : (leftItem.skinType || '').toUpperCase() === 'OILY' ? '#fefce8' : (leftItem.skinType || '').toUpperCase() === 'NORMAL' ? '#f0fdf4' : '#fff',
+                                            color: (leftItem.skinType || '').toUpperCase() === 'DRY' ? '#0958d9' : (leftItem.skinType || '').toUpperCase() === 'OILY' ? '#b45309' : (leftItem.skinType || '').toUpperCase() === 'NORMAL' ? '#15803d' : '#2b2b1f',
+                                            border: '1px solid ' + ((leftItem.skinType || '').toUpperCase() === 'DRY' ? '#91caff' : (leftItem.skinType || '').toUpperCase() === 'OILY' ? '#fde68a' : (leftItem.skinType || '').toUpperCase() === 'NORMAL' ? '#86efac' : '#d6d2c4'),
                                             padding: '4px 14px',
                                             borderRadius: '999px',
                                             fontSize: '0.85rem',
@@ -300,16 +300,16 @@ export default function ProgressPage() {
                                             letterSpacing: '1px',
                                             fontFamily: "'DM Sans', system-ui, sans-serif"
                                         }}>
-                                            {leftItem.skinType.toUpperCase()}
+                                            {(leftItem.skinType || 'UNKNOWN').toUpperCase()}
                                         </span>
                                     </td>
 
                                     {/* Kolom Kanan (Comparison B) */}
                                     <td style={{ padding: '16px', fontWeight: 500 }}>
                                         <span style={{
-                                            background: rightItem.skinType.toUpperCase() === 'DRY' ? '#e6f4ff' : rightItem.skinType.toUpperCase() === 'OILY' ? '#fefce8' : rightItem.skinType.toUpperCase() === 'NORMAL' ? '#f0fdf4' : '#fff',
-                                            color: rightItem.skinType.toUpperCase() === 'DRY' ? '#0958d9' : rightItem.skinType.toUpperCase() === 'OILY' ? '#b45309' : rightItem.skinType.toUpperCase() === 'NORMAL' ? '#15803d' : '#2b2b1f',
-                                            border: '1px solid ' + (rightItem.skinType.toUpperCase() === 'DRY' ? '#91caff' : rightItem.skinType.toUpperCase() === 'OILY' ? '#fde68a' : rightItem.skinType.toUpperCase() === 'NORMAL' ? '#86efac' : '#d6d2c4'),
+                                            background: (rightItem.skinType || '').toUpperCase() === 'DRY' ? '#e6f4ff' : (rightItem.skinType || '').toUpperCase() === 'OILY' ? '#fefce8' : (rightItem.skinType || '').toUpperCase() === 'NORMAL' ? '#f0fdf4' : '#fff',
+                                            color: (rightItem.skinType || '').toUpperCase() === 'DRY' ? '#0958d9' : (rightItem.skinType || '').toUpperCase() === 'OILY' ? '#b45309' : (rightItem.skinType || '').toUpperCase() === 'NORMAL' ? '#15803d' : '#2b2b1f',
+                                            border: '1px solid ' + ((rightItem.skinType || '').toUpperCase() === 'DRY' ? '#91caff' : (rightItem.skinType || '').toUpperCase() === 'OILY' ? '#fde68a' : (rightItem.skinType || '').toUpperCase() === 'NORMAL' ? '#86efac' : '#d6d2c4'),
                                             padding: '4px 14px',
                                             borderRadius: '999px',
                                             fontSize: '0.85rem',
@@ -317,7 +317,7 @@ export default function ProgressPage() {
                                             letterSpacing: '1px',
                                             fontFamily: "'DM Sans', system-ui, sans-serif"
                                         }}>
-                                            {rightItem.skinType.toUpperCase()}
+                                            {(rightItem.skinType || 'UNKNOWN').toUpperCase()}
                                         </span>
                                     </td>
                                 </tr>

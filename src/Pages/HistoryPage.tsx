@@ -342,7 +342,7 @@ export default function HistoryPage() {
 
         {history.length === 0 ? (
           <section className="history-empty" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 20px', background: '#fff', borderRadius: '16px', border: '1px solid #d6d2c4' }}>
-            <strong style={{ fontSize: '3rem', marginBottom: '10px' }}>📸</strong>
+            <strong style={{ fontSize: '3rem', marginBottom: '25px' }}>📸</strong>
             <h2 style={{ fontFamily: "'Playfair Display', serif", margin: '0 0 8px' }}>No history yet</h2>
             <p style={{ color: '#6b6b55', margin: '0 0 20px' }}>After scanning, the results are automatically saved on this page.</p>
             <a href="/scan" style={{ display: 'inline-block', padding: '10px 24px', background: '#918b6b', color: '#fff', borderRadius: '999px', textDecoration: 'none', fontWeight: 700 }}>Start Scan</a>
@@ -364,9 +364,9 @@ export default function HistoryPage() {
                   <div className="history-row-body" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                       <span style={{
-                          background: item.skinType.toUpperCase() === 'DRY' ? '#e6f4ff' : item.skinType.toUpperCase() === 'OILY' ? '#fefce8' : item.skinType.toUpperCase() === 'NORMAL' ? '#f0fdf4' : '#fff',
-                          color: item.skinType.toUpperCase() === 'DRY' ? '#0958d9' : item.skinType.toUpperCase() === 'OILY' ? '#b45309' : item.skinType.toUpperCase() === 'NORMAL' ? '#15803d' : '#2b2b1f',
-                          border: '1px solid ' + (item.skinType.toUpperCase() === 'DRY' ? '#91caff' : item.skinType.toUpperCase() === 'OILY' ? '#fde68a' : item.skinType.toUpperCase() === 'NORMAL' ? '#86efac' : '#d6d2c4'),
+                          background: (item.skinType || '').toUpperCase() === 'DRY' ? '#e6f4ff' : (item.skinType || '').toUpperCase() === 'OILY' ? '#fefce8' : (item.skinType || '').toUpperCase() === 'NORMAL' ? '#f0fdf4' : '#fff',
+                          color: (item.skinType || '').toUpperCase() === 'DRY' ? '#0958d9' : (item.skinType || '').toUpperCase() === 'OILY' ? '#b45309' : (item.skinType || '').toUpperCase() === 'NORMAL' ? '#15803d' : '#2b2b1f',
+                          border: '1px solid ' + ((item.skinType || '').toUpperCase() === 'DRY' ? '#91caff' : (item.skinType || '').toUpperCase() === 'OILY' ? '#fde68a' : (item.skinType || '').toUpperCase() === 'NORMAL' ? '#86efac' : '#d6d2c4'),
                           padding: '4px 14px',
                           borderRadius: '999px',
                           fontSize: '0.85rem',
@@ -374,7 +374,7 @@ export default function HistoryPage() {
                           letterSpacing: '1px',
                           fontFamily: "'DM Sans', system-ui, sans-serif"
                       }}>
-                          {item.skinType.toUpperCase()}
+                          {(item.skinType || 'UNKNOWN').toUpperCase()}
                       </span>
                       <span style={{ color: '#9e9e80', fontSize: '0.85rem' }}>{timeAgo(item.date)}</span>
                   </div>
