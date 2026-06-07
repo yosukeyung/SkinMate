@@ -143,48 +143,63 @@ export default function ScanPage() {
     setResult(null);
 
     try {
+      // Convert base64 dataURL → Blob → File for multipart upload
+      const res = await fetch(selectedImage);
+      const blob = await res.blob();
+      const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
+
+      const formData = new FormData();
+      formData.append('file', file);
+
       const response = await fetch(`${BACKEND_URL}/api/analyze`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            imageUrl: selectedImage,
-            userId: user?.id || 'demo-user-id' // use actual user ID if available
-        }),
+        body: formData,
+        // Do NOT set Content-Type header — browser sets it with boundary automatically
       });
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `Server error ${response.status}`);
+        throw new Error(errData.detail || errData.error || `Server error ${response.status}`);
       }
 
-      const resData = await response.json();
-      
-      if (!resData.success) {
-          throw new Error(resData.error || 'Failed to analyze');
-      }
+      // Backend returns flat object: { skin_type, acne_detections, zones, overall_confidence, annotated_image, face_crop }
+      const data = await response.json();
 
-      const data = resData.data;
+      // Determine acne severity from detections
+      const detections = data.acne_detections || [];
+      const hasInflamedSevere = detections.some((d: any) => d.category === 'Meradang Parah');
+      const hasInflamed = detections.some((d: any) => d.category === 'Meradang');
+      const acneSeverityLabel = hasInflamedSevere ? 'Inflamed (Severe)' : hasInflamed ? 'Inflamed' : detections.length > 0 ? 'Non-Inflamed' : 'Clear';
+      const overallCondition = hasInflamedSevere || hasInflamed ? 'Needs Attention' : detections.length > 0 ? 'Mild' : 'Clear';
+
+      const aiResultJson = {
+        skin_type: data.skin_type,
+        skin_confidence: data.skin_confidence,
+        acne_detections: detections,
+        zones: data.zones || [],
+        overall_confidence: data.overall_confidence,
+      };
 
       const item: ScanHistoryItem = {
-        id: data.id || makeId(),
-        image: data.imageUrl || selectedImage, // prefer annotated image from AI
-        skinType: data.skinType ?? 'Unknown',
+        id: makeId(),
+        image: data.annotated_image || selectedImage,
+        skinType: data.skin_type ? (data.skin_type.charAt(0).toUpperCase() + data.skin_type.slice(1)) : 'Unknown',
         skinTypeDesc: 'Detected skin type from AI',
-        acneType: data.acneType ?? 'Unknown',
-        acneTypeDesc: data.acneSeverityLabel ?? '',
-        overallCondition: data.acneSeverityLabel === 'Inflamed' ? 'Needs Attention' : data.acneSeverityLabel === 'Non-Inflamed' ? 'Mild' : 'Clear',
-        skincareTips: data.aiResultJson?.skincareTips || ['Maintain a good skincare routine and consult a dermatologist if needed.'],
-        confidence: data.aiResultJson?.overall_confidence ? Math.round((data.aiResultJson.overall_confidence as number) * 100) : 85,
-        date: data.createdAt || new Date().toISOString(),
-        isDemo: data.aiResultJson?._mock === true,
-        aiResultJson: data.aiResultJson || {},
+        acneType: detections.length > 0 ? detections[0].acne_type : 'None',
+        acneTypeDesc: acneSeverityLabel,
+        overallCondition,
+        skincareTips: ['Maintain a good skincare routine and consult a dermatologist if needed.'],
+        confidence: data.overall_confidence ? Math.round(data.overall_confidence * 100) : 85,
+        date: new Date().toISOString(),
+        isDemo: false,
+        aiResultJson,
       };
-      
-      // Update local storage for dashboard if not fully relying on backend
+
+      // Save to localStorage
       const raw = localStorage.getItem(STORAGE_KEY);
       const history = raw ? JSON.parse(raw) : [];
       localStorage.setItem(STORAGE_KEY, JSON.stringify([item, ...history]));
-      
+
       // Also save to Supabase if user is logged in
       if (user?.id) {
         await supabase.from('scan_history').insert({
@@ -198,15 +213,15 @@ export default function ScanPage() {
           overall_condition: item.overallCondition,
           skincare_tips: item.skincareTips,
           confidence: item.confidence,
-          is_demo: item.isDemo || false,
-          ai_result_json: item.aiResultJson || {},
+          is_demo: false,
+          ai_result_json: aiResultJson,
           created_at: item.date
         });
       }
 
       setResult(item);
     } catch (err: any) {
-      setError(`Backend Error: ${err.message}. Backend might not be fully connected.`);
+      setError(`Analysis Error: ${err.message}`);
     } finally {
       setAnalyzing(false);
     }
