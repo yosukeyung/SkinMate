@@ -1,0 +1,552 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+.scan-header {
+  display: flex;
+  flex-direction: column;   /* Menyusun teks dari atas ke bawah */
+  align-items: center;      /* Memastikan teks tetap di tengah (center) */
+  text-align: center;
+  gap: 12px;                /* INI KUNCINYA: Memberikan jarak otomatis 12px antar elemen */
+}
+
+/* Reset margin bawaan browser agar jaraknya benar-benar diatur oleh 'gap' saja */
+.scan-header p, 
+.scan-header h1, 
+.scan-header span {
+  margin: 0; 
+}
+
+.scan-header h1 {
+  line-height: 1.2;         /* Mencegah ekor font serif bertabrakan ke bawah */
+}
+
+.scan-page {
+  min-height: 100vh;
+  background: #f5f2ec;
+  color: #2b2b1f;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Force light colors regardless of OS dark mode */
+.scan-page h1, .scan-page h2, .scan-page h3 {
+  color: #2b2b1f;
+}
+
+/* ─── Navbar ──────────────────────────────────────────────────────────────── */
+.scan-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 8%;
+  background: rgba(245, 242, 236, 0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(214, 210, 196, 0.5);
+}
+.scan-logo {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  color: #5e5e3a;
+  text-decoration: none;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+}
+.scan-logo span {
+  color: #918b6b;
+}
+.scan-logo {
+  flex: 1;
+}
+.scan-nav-actions {
+  display: flex;
+  gap: 120px;
+  align-items: center;
+  justify-content: center;
+}
+.scan-nav-actions a {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #6b6b55;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.scan-nav-actions a:hover {
+  color: #5e5e3a;
+  background: transparent;
+}
+
+.scan-nav-actions a.nav-active {
+  color: #5e5e3a;
+  font-weight: 600;
+  background: transparent;
+}
+
+.scan-nav-actions a.nav-active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #918b6b;
+  border-radius: 2px;
+}
+.scan-nav-avatar {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  text-decoration: none;
+}
+.scan-nav-avatar:hover .scan-avatar-circle {
+  background: #2b2b1f;
+  box-shadow: 0 0 0 2px #2b2b1f;
+}
+.scan-avatar-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: #918b6b;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #d6d2c4;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+/* ─── Shell ───────────────────────────────────────────────────────────────── */
+.scan-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 42px 22px 80px;
+}
+.scan-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.scan-header p {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #918b6b;
+}
+.scan-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 8px 0;
+}
+.scan-header span {
+  color: #6b6b55;
+}
+
+/* ─── Input Card (sebelum ada hasil) ─────────────────────────────────────── */
+.scan-card {
+  background: #fff;
+  border: 1px solid #d6d2c4;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 16px 45px rgba(90, 90, 50, 0.1);
+  max-width: 660px;
+  margin: 0 auto;
+}
+.scan-preview {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #1c1c14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+}
+.scan-preview video,
+.scan-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.scan-preview video {
+  display: none;
+}
+.scan-preview video.show {
+  display: block;
+}
+.scan-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+}
+.scan-empty strong {
+  font-size: 3rem;
+}
+.face-guide {
+  position: absolute;
+  width: 180px;
+  height: 230px;
+  border-radius: 50%;
+  border: 2px dashed rgba(245, 242, 236, 0.8);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+.scan-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.scan-controls button,
+.scan-controls label {
+  border: 1.5px solid #d6d2c4;
+  background: #fff;
+  color: #2b2b1f;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.scan-controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.scan-controls .primary {
+  background: #918b6b;
+  border-color: #918b6b;
+  color: #fff;
+}
+.scan-controls input {
+  display: none;
+}
+
+/* ─── Loading ─────────────────────────────────────────────────────────────── */
+.scan-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(245, 242, 236, 0.94);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.scan-spinner {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  border: 4px solid #d6d2c4;
+  border-top-color: #918b6b;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.scan-loading h2 {
+  font-family: 'Playfair Display', serif;
+  margin: 16px 0 4px;
+}
+.scan-loading p {
+  color: #6b6b55;
+}
+
+/* ─── Offline Note ────────────────────────────────────────────────────────── */
+.scan-offline-note {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: #475569;
+  margin-top: 14px;
+  max-width: 660px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── Result Full ─────────────────────────────────────────────────────────── */
+.scan-result-full {
+  background: #fff;
+  border: 1px solid #d6d2c4;
+  border-radius: 28px;
+  padding: 32px;
+  margin-top: 24px;
+  box-shadow: 0 20px 60px rgba(90, 90, 50, 0.12);
+}
+
+/* ─── Note Banner ─────────────────────────────────────────────────────────── */
+.result-note {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  font-size: 0.83rem;
+  color: #78350f;
+  line-height: 1.5;
+}
+.note-badge {
+  flex-shrink: 0;
+  background: #fbbf24;
+  color: #451a03;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-top: 1px;
+}
+.result-note strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.87rem;
+}
+.result-note code {
+  background: #fef3c7;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+/* ─── SPLIT LAYOUT: Foto Kiri | Info Kanan ───────────────────────────────── */
+.result-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-bottom: 28px;
+  align-items: stretch;
+}
+
+/* Foto Panel (kiri) */
+.result-image-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.result-image-wrap {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  flex: 1;
+  min-height: 300px;
+  background: #1c1c14;
+}
+.result-big-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  min-height: 300px;
+}
+/* Badge overlay di atas foto */
+.result-overlay-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.88rem;
+  padding: 7px 16px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.5px;
+}
+.result-accuracy-label {
+  font-size: 0.82rem;
+  color: #918b6b;
+  margin: 0;
+  text-align: center;
+  padding: 8px 12px;
+  background: #f8f7f2;
+  border-radius: 10px;
+  border: 1px solid #e8e4d8;
+}
+.result-accuracy-label strong {
+  color: #2b2b1f;
+}
+.result-demo-label {
+  color: #b45309 !important;
+  font-style: italic;
+}
+
+/* Info Panel (kanan) */
+.result-info-panel {
+  display: flex;
+  flex-direction: column;
+}
+.result-cards-stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+.result-card {
+  border-radius: 18px;
+  padding: 22px;
+  flex: 1;
+}
+.skin-type-card {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+}
+.acne-type-card {
+  background: #fefce8;
+  border: 1px solid #fde68a;
+}
+.rc-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+.rc-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #6b6b55;
+  margin-bottom: 6px;
+}
+.rc-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2b2b1f;
+  margin-bottom: 10px;
+}
+.rc-desc {
+  font-size: 0.85rem;
+  color: #6b6b55;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ─── Tips Section (bawah) ───────────────────────────────────────────────── */
+.result-tips {
+  background: #f8f7f2;
+  border-radius: 18px;
+  padding: 22px 26px;
+  margin-bottom: 20px;
+  border: 1px solid #e8e4d8;
+}
+.result-tips h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 16px;
+  color: #2b2b1f;
+}
+.result-tips-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.result-tips-list li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  color: #5e5e3a;
+  line-height: 1.6;
+}
+.tip-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background: #918b6b;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-top: 1px;
+}
+
+/* ─── Disclaimer + Actions ───────────────────────────────────────────────── */
+.result-disclaimer {
+  font-size: 0.78rem;
+  color: #918b6b;
+  border-top: 1px solid #e5e3db;
+  padding-top: 16px;
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+.scan-result-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn-history {
+  flex: 1;
+  text-align: center;
+  padding: 13px 20px;
+  background: #2b2b1f;
+  color: #fff;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.btn-reset {
+  flex: 1;
+  padding: 13px 20px;
+  background: #fff;
+  border: 1px solid #d6d2c4;
+  border-radius: 12px;
+  color: #6b6b55;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .result-split {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .result-image-wrap {
+    min-height: 260px;
+  }
+  .result-big-photo {
+    min-height: 260px;
+  }
+  .result-cards-stacked {
+    gap: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .scan-nav {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .scan-result-full {
+    padding: 22px 18px;
+  }
+}
