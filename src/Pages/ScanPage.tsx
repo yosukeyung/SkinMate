@@ -4,6 +4,7 @@ import logoImg from '../assets/logo.png';
 import { getUser } from '../auth';
 import { BACKEND_URL } from '../api';
 import { supabase } from '../supabaseClient';
+import { uploadScanImage } from '../historyService';
 
 function getInitials(name: string) {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -195,31 +196,41 @@ export default function ScanPage() {
         aiResultJson,
       };
 
+      // Upload image to Supabase Storage (avoids storing large base64 in DB row)
+      let imageUrl = item.image;
+      if (user?.id && item.image.startsWith('data:')) {
+        imageUrl = await uploadScanImage(item.image, item.id);
+      }
+      const itemWithUrl = { ...item, image: imageUrl };
+
       // Save to localStorage
       const raw = localStorage.getItem(STORAGE_KEY);
       const history = raw ? JSON.parse(raw) : [];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([item, ...history]));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([itemWithUrl, ...history]));
 
       // Also save to Supabase if user is logged in
       if (user?.id) {
-        await supabase.from('scan_history').insert({
-          id: item.id,
+        const { error: insertError } = await supabase.from('scan_history').insert({
+          id: itemWithUrl.id,
           user_id: user.id,
-          image: item.image,
-          skin_type: item.skinType,
-          skin_type_desc: item.skinTypeDesc,
-          acne_type: item.acneType,
-          acne_type_desc: item.acneTypeDesc,
-          overall_condition: item.overallCondition,
-          skincare_tips: item.skincareTips,
-          confidence: item.confidence,
+          image: imageUrl,
+          skin_type: itemWithUrl.skinType,
+          skin_type_desc: itemWithUrl.skinTypeDesc,
+          acne_type: itemWithUrl.acneType,
+          acne_type_desc: itemWithUrl.acneTypeDesc,
+          overall_condition: itemWithUrl.overallCondition,
+          skincare_tips: itemWithUrl.skincareTips,
+          confidence: itemWithUrl.confidence,
           is_demo: false,
           ai_result_json: aiResultJson,
-          created_at: item.date
+          created_at: itemWithUrl.date
         });
+        if (insertError) {
+          console.error('Supabase insert error:', insertError);
+        }
       }
 
-      setResult(item);
+      setResult(itemWithUrl);
     } catch (err: any) {
       setError(`Analysis Error: ${err.message}`);
     } finally {

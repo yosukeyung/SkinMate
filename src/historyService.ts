@@ -1,6 +1,37 @@
 import { supabase } from './supabaseClient';
 import { getUser } from './auth';
 
+const BUCKET = 'scan-images';
+
+/**
+ * Uploads a base64 dataURL image to Supabase Storage.
+ * Returns the public URL, or falls back to the original base64 if upload fails.
+ */
+export async function uploadScanImage(base64DataUrl: string, scanId: string): Promise<string> {
+  try {
+    // Convert base64 dataURL → Blob
+    const res = await fetch(base64DataUrl);
+    const blob = await res.blob();
+    const filePath = `${scanId}.jpg`;
+
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
+
+    if (error) {
+      console.warn('Storage upload failed, using base64 fallback:', error.message);
+      return base64DataUrl;
+    }
+
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
+    return data.publicUrl;
+  } catch (e) {
+    console.warn('uploadScanImage error, using base64 fallback:', e);
+    return base64DataUrl;
+  }
+}
+
+
 export type ScanHistoryItem = {
   id: string;
   image: string;
