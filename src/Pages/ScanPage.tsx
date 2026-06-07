@@ -143,7 +143,7 @@ export default function ScanPage() {
     setResult(null);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/detect`, {
+      const response = await fetch(`${BACKEND_URL}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
