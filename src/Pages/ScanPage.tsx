@@ -44,10 +44,31 @@ export default function ScanPage() {
   const [error, setError] = useState('');
   const [user, setCurrentUser] = useState<{ username: string; id?: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'camera'|'upload'>('camera');
+  const [countdown, setCountdown] = useState<number | null>(null);
 
   useEffect(() => {
     setCurrentUser(getUser());
   }, []);
+
+  useEffect(() => {
+  // Jika hitungan mundur tidak aktif, abaikan
+  if (countdown === null) return;
+
+  // Jika menyentuh 0, eksekusi fungsi jepret dan reset hitungan
+  if (countdown === 0) {
+    captureFromCamera();
+    setCountdown(null);
+    return;
+  }
+
+  // Turunkan angka setiap 1000ms (1 detik)
+  const timer = setTimeout(() => {
+    setCountdown(countdown - 1);
+  }, 1000);
+
+  // Bersihkan memori agar tidak bocor
+  return () => clearTimeout(timer);
+}, [countdown]);
 
   function stopCamera() {
     if (streamRef.current) {
@@ -311,26 +332,45 @@ export default function ScanPage() {
                     </button>
                 </div>
 
-                <div className="scan-preview" style={{ marginBottom: '15px' }}>
-                <video ref={videoRef} className={cameraOpen ? 'show' : ''} autoPlay playsInline muted />
-                {image && <img src={image} alt="Preview scan" />}
-                {!cameraOpen && !image && (
-                    <div className="scan-empty">
-                    <strong>📷</strong>
-                    <p>{activeTab === 'camera' ? 'Camera will appear here' : 'Upload photo will appear here'}</p>
+                <div className="scan-preview" style={{ marginBottom: '15px', position: 'relative' }}>
+                  <video ref={videoRef} className={cameraOpen ? 'show' : ''} autoPlay playsInline muted />
+                  
+                  {/* Tambahkan Overlay Angka Hitungan Mundur di atas video */}
+                  {countdown !== null && (
+                    <div style={{
+                      position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      backgroundColor: 'rgba(0,0,0,0.4)', color: 'white',
+                      fontSize: '6rem', fontWeight: 'bold', zIndex: 10, borderRadius: '8px'
+                    }}>
+                      {countdown > 0 ? countdown : '📸'}
                     </div>
-                )}
-                {(cameraOpen || image) && activeTab === 'camera' && <div className="face-guide" />}
+                  )}
+
+                  {image && <img src={image} alt="Preview scan" />}
+                  {!cameraOpen && !image && (
+                    <div className="scan-empty">
+                      <strong>📷</strong>
+                      <p>{activeTab === 'camera' ? 'Camera will appear here' : 'Upload photo will appear here'}</p>
+                    </div>
+                  )}
+                  {(cameraOpen || image) && activeTab === 'camera' && <div className="face-guide" />}
                 </div>
 
                 <div className="scan-controls" style={{ justifyContent: 'center' }}>
                     {activeTab === 'camera' ? (
                         <>
                             {!image ? (
-                                <button type="button" className="primary" onClick={captureFromCamera} disabled={!cameraOpen}>
-                                    📸 Capture Photo (3s)
-                                </button>
+                              <button 
+                                type="button" 
+                                className="primary" 
+                                onClick={() => setCountdown(3)} // Memicu hitungan dari angka 3
+                                disabled={!cameraOpen || countdown !== null} // Disable tombol saat sedang menghitung
+                              >
+                                {countdown !== null ? `Capturing in ${countdown}...` : '📸 Capture Photo (3s)'}
+                              </button>
                             ) : (
+                              
                                 <>
                                     <button type="button" onClick={() => { setImage(''); openCamera(); }}>Retake</button>
                                     <button type="button" className="primary" onClick={analyzeNow} disabled={analyzing}>Analyze Now</button>
