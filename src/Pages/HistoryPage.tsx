@@ -148,9 +148,6 @@ function DetailPage({
           <div className="detail-image-panel">
             <div className="detail-image-wrap">
               <img src={item.image} alt="Detail scan" className="detail-big-photo" />
-              <div className="detail-overlay-badge" style={{ background: conditionColor + 'ee' }}>
-                {item.overallCondition}
-              </div>
             </div>
             {!item.isDemo ? (
               <p className="detail-accuracy-label">🎯 Average accuracy: <strong>{item.confidence}%</strong></p>
