@@ -333,7 +333,7 @@ export default function ScanPage() {
                 </div>
 
                 <div className="scan-preview" style={{ marginBottom: '15px', position: 'relative' }}>
-                  <video ref={videoRef} className={cameraOpen ? 'show' : ''} autoPlay playsInline muted />
+                  <video ref={videoRef} className={cameraOpen ? 'show' : ''} autoPlay playsInline muted style={{transform:'scaleX(1)'}} />
                   
                   {/* Tambahkan Overlay Angka Hitungan Mundur di atas video */}
                   {countdown !== null && (
@@ -370,7 +370,7 @@ export default function ScanPage() {
                                 {countdown !== null ? `Capturing in ${countdown}...` : '📸 Capture Photo (3s)'}
                               </button>
                             ) : (
-                              
+
                                 <>
                                     <button type="button" onClick={() => { setImage(''); openCamera(); }}>Retake</button>
                                     <button type="button" className="primary" onClick={analyzeNow} disabled={analyzing}>Analyze Now</button>
