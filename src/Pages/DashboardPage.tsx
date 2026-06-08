@@ -18,6 +18,7 @@ type ScanHistoryItem = {
   confidence: number;
   date: string;
   isDemo?: boolean;
+  aiResultJson?: any;
 };
 
 function getInitials(name: string) {
@@ -56,14 +57,23 @@ function timeAgo(value: string) {
 // ─── Chart: kondisi over time ──────────────────────────────────────────────────
 
 function getAcneCount(h: ScanHistoryItem) {
-  const match = (h.acneType || '').match(/\d+/);
-  if (match) return parseInt(match[0], 10);
-  let hash = 0;
-  const str = h.id || '';
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return Math.abs(hash) % 60;
+    const anyH = h as any;
+    
+    // 1. Prioritaskan membaca jumlah jerawat asli dari AI
+    if (anyH.aiResultJson && Array.isArray(anyH.aiResultJson.acne_detections)) {
+        return anyH.aiResultJson.acne_detections.length;
+    }
+    
+    // 2. Fallback cadangan
+    const match = (h.acneType || '').match(/\d+/);
+    if (match) return parseInt(match[0], 10);
+    
+    let hash = 0;
+    const str = h.id || '';
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % 60;
 }
 
 function TrendChart({ history }: { history: ScanHistoryItem[] }) {
