@@ -333,7 +333,7 @@ export default function ScanPage() {
                 </div>
 
                 <div className="scan-preview" style={{ marginBottom: '15px', position: 'relative' }}>
-                  <video ref={videoRef} className={cameraOpen ? 'show' : ''} autoPlay playsInline muted style={{transform:'scaleX(1)'}} />
+                  <video ref={videoRef} className={cameraOpen ? 'show' : ''} autoPlay playsInline muted style={{transform:'scaleX(-1)'}} />
                   
                   {/* Tambahkan Overlay Angka Hitungan Mundur di atas video */}
                   {countdown !== null && (
