@@ -26,15 +26,6 @@ type ScanHistoryItem = {
 
 const STORAGE_KEY = 'skinmate_scan_history';
 
-const CONDITION_COLOR: Record<string, string> = {
-  Good: '#22c55e',
-  Fair: '#f59e0b',
-  'Needs Attention': '#ef4444',
-  'AI Not Found': '#94a3b8',
-};
-
-
-
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString('en-US', {
     day: 'numeric',
@@ -125,7 +116,6 @@ function DetailPage({
   onBack: () => void;
   onDelete?: (id: string) => void;
 }) {
-  const conditionColor = CONDITION_COLOR[item.overallCondition] || '#94a3b8';
 
   return (
     <div className="detail-page">

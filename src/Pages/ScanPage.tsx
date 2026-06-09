@@ -206,6 +206,43 @@ export default function ScanPage() {
         overall_confidence: data.overall_confidence,
       };
 
+      const skinForTips = (data.skin_type || 'UNKNOWN').toUpperCase();
+      const comedoCount = (data.zones || []).filter((z: any) => !z.is_inflamed).reduce((sum: number, z: any) => sum + z.count, 0);
+      const inflamedCount = (data.zones || []).filter((z: any) => z.is_inflamed).reduce((sum: number, z: any) => sum + z.count, 0);
+
+      const hasInflamedTips = inflamedCount > 0;
+      const isSevereTips = inflamedCount >= 10;
+      const hasComedoTips = comedoCount > 0;
+
+      const dynamicTips: string[] = [];
+
+      if (skinForTips === 'OILY') {
+        dynamicTips.push('Use a gentle foaming cleanser with 2% Salicylic Acid (BHA) to unclog pores and control excess oil production.');
+      } else if (skinForTips === 'DRY') {
+        dynamicTips.push('Opt for a hydrating, non-foaming cleanser containing Ceramides or Hyaluronic Acid. Avoid cleansers that leave skin feeling tight.');
+      } else {
+        dynamicTips.push('Use a gentle, pH-balanced cleanser twice daily to maintain a healthy skin barrier.');
+      }
+
+      if (isSevereTips) {
+        dynamicTips.push('For severe inflamed acne (nodules/cysts), it is strongly recommended to consult a dermatologist for a prescription of topical/oral antibiotics or medical-grade retinoids.');
+        dynamicTips.push('Apply an acne spot treatment with 2.5% Benzoyl Peroxide or Sulfur only on active breakout areas.');
+      } else if (hasInflamedTips) {
+        dynamicTips.push('For inflamed acne (papules/pustules), apply Centella Asiatica extract or Niacinamide (max 5%) to soothe redness and calm irritation.');
+        dynamicTips.push('Use an acne spot treatment such as 2.5% Benzoyl Peroxide or Tea Tree Oil directly on actively inflamed blemishes.');
+      } else if (hasComedoTips) {
+        dynamicTips.push('Use a gentle chemical exfoliant with BHA (Salicylic Acid) 1–2 times per week to clear out blackheads and whiteheads.');
+      }
+
+      if (skinForTips === 'OILY' || skinForTips === 'NORMAL') {
+        dynamicTips.push('Always use a lightweight, water-based gel moisturizer to keep skin hydrated without clogging pores.');
+      } else if (skinForTips === 'DRY') {
+        dynamicTips.push('Use a rich, ceramide-based cream moisturizer to lock in hydration and strengthen the skin barrier.');
+      }
+
+      dynamicTips.push('Apply a non-comedogenic SPF 30+ sunscreen every morning — active acne ingredients increase skin sensitivity to UV rays.');
+      // ----------------------------------------------
+
       const item: ScanHistoryItem = {
         id: makeId(),
         image: data.annotated_image || selectedImage,
@@ -214,7 +251,7 @@ export default function ScanPage() {
         acneType: detections.length > 0 ? detections[0].acne_type : 'None',
         acneTypeDesc: acneSeverityLabel,
         overallCondition,
-        skincareTips: ['Maintain a good skincare routine and consult a dermatologist if needed.'],
+        skincareTips: dynamicTips,
         confidence: data.overall_confidence ? Math.round(data.overall_confidence * 100) : 85,
         date: new Date().toISOString(),
         isDemo: false,
