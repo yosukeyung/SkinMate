@@ -11,7 +11,6 @@
 > **An advanced AI-powered skincare companion that utilizes Computer Vision to analyze skin types, detect acne severity, and provide personalized skincare recommendations.**
 > _Built as a Computer Vision university final project! 🚀_
 >
-> **Status:** 🏁 Completed
 >
 > **🌟 Live Demo:** [**SkinMate Web App**](https://skinmateai.vercel.app/) | [**AI Inference API**](https://huggingface.co/spaces/midoo012/skincare-vision-api/tree/main)
 
