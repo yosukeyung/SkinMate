@@ -31,6 +31,39 @@ _Note: Due to the large size of the PyTorch and YOLOv8 models, this repository e
 - **📝 Personalized Skincare Tips:** Generates dynamic, science-backed skincare recommendations based on the unique combination of the user's skin type and acne severity.
 - **📈 Progress Tracking & Comparison:** Saves scan histories locally to visualize skin improvement over time via interactive charts, including a side-by-side visual skin comparison tool.
 
+## 📐 System Architecture
+
+```mermaid
+graph TD
+    subgraph Client Side [Frontend - Vercel]
+        UI[React + Vite UI]
+    end
+
+    subgraph Supabase Cloud [Database & Auth]
+        Auth[Supabase Authentication]
+        DB[(PostgreSQL: User History)]
+    end
+
+    subgraph Cloud AI Engine [Backend - Hugging Face Space]
+        API[FastAPI Server]
+        YOLO[YOLOv8: Acne Localization]
+        EffNet[EfficientNet: Skin & Acne Classification]
+        DBScan[DBSCAN: Zone Clustering]
+    end
+
+    UI -- Login/Signup --> Auth
+    UI -- Image Upload Payload --> API
+    API --> YOLO
+    API --> EffNet
+    API --> DBScan
+    YOLO -.-> API
+    EffNet -.-> API
+    DBScan -.-> API
+    API -- Inference Data JSON --> UI
+    UI -- Save Progress Data --> DB
+    UI -- Fetch History --> DB
+```
+
 ## 🤝 My Role & Contributions
 
 In this collaborative group project, my core responsibility was architecting the **Artificial Intelligence Engine and Backend API**. My specific contributions include:
@@ -55,6 +88,7 @@ In this collaborative group project, my core responsibility was architecting the
 - **React (Vite) & TypeScript** ⚛️
 - **CSS** 🎨 (Custom modular styles)
 - **Recharts** 📊 (For progress tracking visualization)
+- Supabase 🗄️ (PostgreSQL Database & User Authentication)
 
 ## 📂 Project Structure (Frontend)
 
@@ -93,7 +127,9 @@ In this collaborative group project, my core responsibility was architecting the
 4. Inside the .env file, link the frontend to the Hugging Face Space API:
 
    ```bash
-   VITE_BACKEND_URL=https://midoo012-skincare-vision-api.hf.space
+   VITE_BACKEND_URL=https://YOUR_HF_USERNAME-YOUR_HF_SPACE_NAME.hf.space
+   VITE_SUPABASE_URL=YOUR_SUPABASE_URL
+   VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
    ```
 
 5. Start the development server:
@@ -104,6 +140,8 @@ In this collaborative group project, my core responsibility was architecting the
 ## 🌐Deployment Architecture
 
 - Frontend: Seamlessly deployed to Vercel utilizing the Vite framework preset.
+
+- Database: Supabase acts as the cloud database and authentication provider.
 
 - Backend: Hosted on Hugging Face Spaces utilizing Docker and FastAPI to efficiently handle heavy PyTorch tensor computations and computer vision inferences in the cloud.
 
