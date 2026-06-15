@@ -87,7 +87,7 @@ In this collaborative group project, my core responsibility was architecting the
 - **React (Vite) & TypeScript** ⚛️
 - **CSS** 🎨 (Custom modular styles)
 - **Recharts** 📊 (For progress tracking visualization)
-- Supabase 🗄️ (PostgreSQL Database & User Authentication)
+- **Supabase** 🗄️ (PostgreSQL Database & User Authentication)
 
 ## 📂 Project Structure (Frontend)
 
