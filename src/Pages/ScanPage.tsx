@@ -45,6 +45,7 @@ export default function ScanPage() {
   const [user, setCurrentUser] = useState<{ username: string; id?: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'camera'|'upload'>('camera');
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     setCurrentUser(getUser());
@@ -121,6 +122,35 @@ export default function ScanPage() {
     stopCamera();
     return dataUrl;
   }
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault(); // Mencegah browser membuka foto di tab baru
+    if (activeTab === 'upload') {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    // Jika sedang di tab upload dan ada file yang di-drop
+    if (activeTab === 'upload' && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+      // Pastikan file adalah gambar
+      if (file.type.startsWith('image/')) {
+        uploadPhoto(file);
+      } else {
+        alert('Please drop an image file.');
+      }
+      e.dataTransfer.clearData();
+    }
+  };
 
   function uploadPhoto(file: File | undefined) {
     if (!file) return;
@@ -373,7 +403,20 @@ export default function ScanPage() {
                     </button>
                 </div>
 
-                <div className="scan-preview" style={{ marginBottom: '15px', position: 'relative' }}>
+                <div 
+                  className="scan-preview" 
+                  style={{ 
+                    marginBottom: '15px', 
+                    position: 'relative',
+                    // Tambahkan efek visual (border putus-putus) saat file sedang di-drag
+                    border: isDragging ? '3px dashed #918b6b' : 'none', 
+                    opacity: isDragging ? 0.7 : 1,
+                    transition: 'all 0.2s ease-in-out'
+                  }}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
                   <video ref={videoRef} className={cameraOpen ? 'show' : ''} autoPlay playsInline muted style={{transform:'scaleX(-1)'}} />
                   
                   {countdown !== null && (
@@ -388,10 +431,18 @@ export default function ScanPage() {
                   )}
 
                   {image && <img src={image} alt="Preview scan" />}
+                  
                   {!cameraOpen && !image && (
                     <div className="scan-empty">
-                      <strong>📷</strong>
-                      <p>{activeTab === 'camera' ? 'Camera will appear here' : 'Upload photo will appear here'}</p>
+                      <strong>{isDragging ? '📥' : '📷'}</strong>
+                      {/* Ubah teks agar lebih informatif */}
+                      <p>
+                        {activeTab === 'camera' 
+                          ? 'Camera will appear here' 
+                          : isDragging 
+                            ? 'Drop your photo here!' 
+                            : 'Click upload below or drag photo here'}
+                      </p>
                     </div>
                   )}
                   {(cameraOpen || image) && activeTab === 'camera' && <div className="face-guide" />}
