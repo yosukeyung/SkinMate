@@ -24,9 +24,9 @@ _Note: Due to the large size of the PyTorch and YOLOv8 models, this repository e
 
 ## 🎥 Video Demonstration
 
-[![Nomnom AI Demo](./public/skinmate.png)](https://drive.google.com/file/d/19ylwU1BZ1fjGIlAQWWHBjVeMuMYNvLbR/view?usp=drive_link)
+[![Demo](./public/skinmate.png)](https://drive.google.com/file/d/19ylwU1BZ1fjGIlAQWWHBjVeMuMYNvLbR/view?usp=drive_link)
 
-*(Click the image above to watch the full demonstration of Nomnom AI extracting aspect-based sentiments!)*
+*(Click the image above to watch the full demonstration)*
 
 ## ✨ Key Features
 
