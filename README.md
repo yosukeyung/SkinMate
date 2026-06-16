@@ -22,6 +22,12 @@ SkinMate bridges the gap between artificial intelligence and personal dermatolog
 
 _Note: Due to the large size of the PyTorch and YOLOv8 models, this repository exclusively hosts the **Frontend Application**. The core AI inference engine and Backend API are hosted and maintained separately on **Hugging Face Spaces**._
 
+## 🎥 Video Demonstration
+
+[![Nomnom AI Demo](./public/skinmate.png)](https://drive.google.com/file/d/19ylwU1BZ1fjGIlAQWWHBjVeMuMYNvLbR/view?usp=drive_link)
+
+*(Click the image above to watch the full demonstration of Nomnom AI extracting aspect-based sentiments!)*
+
 ## ✨ Key Features
 
 - **🧑‍⚕️ Skin Type Classification:** Automatically detects whether skin is Dry, Oily, or Normal using a fine-tuned EfficientNet model.
