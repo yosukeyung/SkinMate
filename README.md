@@ -110,6 +110,8 @@ In this collaborative group project, my core responsibility was architecting the
 
 ## 💻 Running Locally
 
+> **Note:** For security reasons, the `.env` file containing the production Supabase keys and API endpoints is not included in this repository. To run this locally, you must provide your own API keys or contact the author for a temporary testing environment.
+
 ### Frontend Setup
 
 1. Clone this repository and navigate to the project directory:
